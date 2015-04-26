@@ -6,17 +6,12 @@
 using namespace std;
 
 class Car {
-	int dimension;
 	string plate;
 	int carWidth, carHeight;
 
 public:
 	Car();
-	Car(string plate, int dimension);
-	//string getPlate() const;
-	//int getCarWidth();
-	//int getCarHeight();
-	string getCarInfo();
+	Car(string plate, int carWidth, int carHeight);
 };
 
 #endif /* SRC_CAR_H_ */

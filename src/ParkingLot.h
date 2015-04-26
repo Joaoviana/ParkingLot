@@ -5,24 +5,26 @@
 #include <fstream>
 #include <string>
 #include <algorithm>
+#include <vector>
 
 class ParkingLot {
 
 	int nCars;
-	int nGates;
+	int nEntrance;
 	int nParkingPlace;
+	vector<Car> cars;
 
 public:
 	ParkingLot();
-	ParkingLot(int nCars, int nGates, int nParkingPlace);
+	ParkingLot(int nCars, int nEntrance, int nParkingPlace);
 
 	void loadParkingLot();
 	void loadCars();
 
-	int getNrOfCars() const;
 	int getGates() const;
 	int getParkingPlace() const;
-
+	int getEntrance() const;
+	int getNrOfCars() const;
 	bool checkIfRectangle();
 	bool checkIfEnoughParkingPlaces();
 };

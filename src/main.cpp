@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include "ParkingLot.h"
 #include "Car.h"
+#include "Graph.h"
 
 using namespace std;
 
@@ -16,7 +17,7 @@ int main() {
 	}
 	cout << "Number of cars: " << f.getNrOfCars() << endl;
 	cout << "Number of parking places: " << f.getParkingPlace() << endl;
-	cout << c.getCarInfo();
+//	c.getCarInfo();
 	//create inside of load objects: ParkingLot e Car
 	f.loadParkingLot();
 	f.loadCars();
