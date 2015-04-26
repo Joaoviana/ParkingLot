@@ -8,7 +8,7 @@ using namespace std;
 class Car {
 	string plate;
 	int carWidth, carHeight;
-
+	// add car parking distance
 public:
 	Car();
 	Car(string plate, int carWidth, int carHeight);

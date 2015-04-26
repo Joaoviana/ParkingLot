@@ -1,10 +1,12 @@
 #include "Graph.h"
 
-Vertex::Vertex(vector<Car> cars) {
+Vertex::Vertex(vector<Car> cars, string id) {
 	this->cars = cars;
-	full = false;
-	incomplete = false;
-	entrance = false;
+	this->id = id;
+}
+
+Vertex::Vertex(string id) {
+	this->id = id;
 }
 
 Vertex::~Vertex() {
@@ -12,6 +14,10 @@ Vertex::~Vertex() {
 
 vector<Edge> Vertex::getEdges() {
 	return edges;
+}
+
+void Vertex::loadVertex() {
+
 }
 
 void Vertex::addEdge(Vertex* dest, int weight) {
@@ -79,4 +85,118 @@ int Edge::getWeight() {
 	return weight;
 }
 
+Graph::Graph() {
+}
 
+Graph::~Graph() {
+}
+
+int Graph::getTotalWeight() {
+	return totalweight;
+}
+
+void Graph::setTotalWeight(int w) {
+	this->totalweight = w;
+}
+
+bool Graph::addVertex(vector<Car> cars) {
+	typename vector<Vertex*>::iterator it = vertexSet.begin();
+	//typename std::vector<Vertex<T>*>::iterator ite = vertexSet.end();
+
+	for (; it != vertexSet.end(); it++)
+		if ((*it)->cars == cars)
+			return false;
+
+	Vertex *v = new Vertex(cars);
+	vertexSet.push_back(v);
+
+	return false;
+}
+
+bool Graph::addEdge(const Vertex& source, const Vertex& dest, int w) {
+	typename vector<Vertex*>::iterator it = vertexSet.begin();
+	//typename std::vector<Vertex<T>*>::iterator ite = vertexSet.end();
+
+	int found = 0;
+	Vertex *vS, *vD;
+	while (found != 2 && it != vertexSet.end()) {
+		if ((*it)->info == source) {
+			vS = *it;
+			found++;
+		}
+
+		if ((*it)->info == dest) {
+			vD = *it;
+			found++;
+		}
+
+		it++;
+	}
+
+	if (found != 2)
+		return false;
+
+	vS->addEdge(vD, w);
+	int currentweight = this->getTotalWeight();
+	int newweight = currentweight + w;
+	this->setTotalWeight(newweight);
+
+	return true;
+}
+
+bool Graph::removeVertex(const Vertex& in) {
+	typename vector<Vertex*>::iterator it = vertexSet.begin();
+	typename vector<Vertex*>::iterator ite = vertexSet.end();
+
+	for (; it != ite; it++) {
+		// if found
+		if ((*it)->info == in) {
+			// temporarily save
+			Vertex * v = *it;
+
+			// delete
+			vertexSet.erase(it);
+
+			typename std::vector<Vertex*>::iterator it1 = vertexSet.begin();
+			typename std::vector<Vertex*>::iterator it1e = vertexSet.end();
+
+			for (; it1 != it1e; it1++)
+				(*it1)->removeEdgeTo(v);
+
+			delete v;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool Graph::removeEdge(const Vertex& source, const Vertex& dest) {
+	typename vector<Vertex*>::iterator it = vertexSet.begin();
+	typename vector<Vertex*>::iterator ite = vertexSet.end();
+
+	int found = 0;
+	Vertex *vS, *vD;
+	while (found != 2 && it != ite) {
+		if ((*it)->info == source) {
+			vS = *it;
+			found++;
+		}
+
+		if ((*it)->info == dest) {
+			vD = *it;
+			found++;
+		}
+
+		it++;
+	}
+
+	if (found != 2)
+		return false;
+
+	int weight = vS->removeEdgeTo(vD);
+	int currentweight = this->getTotalWeight();
+	int newweight = currentweight + weight;
+	this->setTotalWeight(newweight);
+	return (weight == 0);
+}
