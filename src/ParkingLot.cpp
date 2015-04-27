@@ -2,6 +2,7 @@
 #include <sstream>
 #include <vector>
 #include <fstream>
+#include <iostream>
 
 ParkingLot::ParkingLot() {
 }
@@ -32,18 +33,18 @@ void ParkingLot::loadParkingLot() {
 }
 
 void ParkingLot::loadCars() {
-
 	ifstream file("cars.txt");
-	string plate, width, height, line;
+	string plate, width, height, line, entrance;
 	int widthint, heightint;
 	while (getline(file, line)) {
 		stringstream iss(line);
 		getline(iss, plate, ',');
 		getline(iss, width, ',');
 		getline(iss, height, ',');
+		getline(iss, entrance, ',');
 		widthint = atoi(width.c_str());
 		heightint = atoi(height.c_str());
-		Car c = Car(plate, widthint, heightint);
+		Car c = Car(plate, widthint, heightint, entrance);
 		cars.push_back(c);
 	}
 
@@ -106,4 +107,22 @@ int ParkingLot::getEntrance() const {
 	}
 	return nrOfEntrances;
 
+}
+
+const vector<Car>& ParkingLot::getCars() const {
+	return cars;
+}
+
+void ParkingLot::setCars(const vector<Car>& cars) {
+	this->cars = cars;
+}
+
+int ParkingLot::getParkingTime(){
+	int time=0;
+	for(int i=0; i<cars.size(); i++){
+		Car c = cars[i];
+		cout << c.getDistanceToEntrance();
+		time+= c.getDistanceToEntrance()/2;
+	}
+	return time;
 }

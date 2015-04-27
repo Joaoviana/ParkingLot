@@ -1,10 +1,13 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <sstream>
 #include <vector>
 #include <string>
 #include "Car.h"
 #include "ParkingLot.h"
+#include <stdio.h>
+#include <string.h>
 
 using namespace std;
 
@@ -14,6 +17,7 @@ class Graph;
 //Lot
 class Vertex {
 public:
+	Vertex();
 	Vertex(vector<Car> cars, string id);
 	Vertex(string id);
 	~Vertex();
@@ -26,13 +30,18 @@ public:
 	void setIncomplete(bool incomplete);
 	bool isVisited() const;
 	void setVisited(bool visited);
-	void loadVertex();
+	string getID();
+	int getDistanceToSource() const;
+	void setDistanceToSource(int distanceToSource);
+	void addCar(Car car);
+
 	friend class Graph;
 private:
 	vector<Edge> edges;
 	bool visited;
 	bool full, incomplete;
 	bool entrance;
+	int distanceToSource;
 	vector<Car> cars;
 	string id;
 	void addEdge(Vertex *dest, int weight);
@@ -52,7 +61,7 @@ public:
 };
 
 class Graph {
-	vector<Vertex *> vertexSet;
+	vector<Vertex*> vertexSet;
 	int totalweight;
 
 public:
@@ -61,8 +70,16 @@ public:
 	int getTotalWeight();
 	void setTotalWeight(int w);
 	bool addVertex(vector<Car> cars);
-	bool addEdge(const Vertex &source, const Vertex &dest, int w);
+	bool addEdge(Vertex *source, Vertex *dest, int w);
 	bool removeVertex(const Vertex &in);
 	bool removeEdge(const Vertex &source, const Vertex &dest);
+	void createVertexes(ParkingLot p);
+	void connectVertexes();
+	Vertex* findVertex(string id);
+	void carsInPosition(ParkingLot pl,Vertex* entrance, vector<Car> cars);
+	vector<Vertex*> dijkstra(Vertex* source);
+	void parkCars(ParkingLot pl);
+
+	//void dijkstraShortestPath(Gate &g, const T &lot)
 };
 

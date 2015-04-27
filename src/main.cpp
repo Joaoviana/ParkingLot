@@ -9,18 +9,30 @@ using namespace std;
 
 int main() {
 
-	ParkingLot f = ParkingLot();
+	ParkingLot p = ParkingLot();
 	Car c = Car();
-	if(f.checkIfRectangle() || !f.checkIfEnoughParkingPlaces()) {
+	Graph g = Graph();
+	p.getCars();
+	p.getEntrance();
+	p.getParkingPlace();
+	p.getNrOfCars();
+
+	if(p.checkIfRectangle() || !p.checkIfEnoughParkingPlaces()) {
 		cout << "parking lot configuration is not a rectangle or theres not enough parking places";
 		exit(0);
 	}
-	cout << "Number of cars: " << f.getNrOfCars() << endl;
-	cout << "Number of parking places: " << f.getParkingPlace() << endl;
-//	c.getCarInfo();
-	//create inside of load objects: ParkingLot e Car
-	f.loadParkingLot();
-	f.loadCars();
+	cout << "Number of cars: " << p.getNrOfCars() << endl;
+	cout << "Number of parking places: " << p.getParkingPlace() << endl;
+
+
+	//p.loadParkingLot();
+	p.loadCars();
+	g.createVertexes(p);
+	g.connectVertexes();
+	cout << "er3" << endl;
+	g.parkCars(p);
+	cout << "er4";
+	cout << "parking time" << p.getParkingTime();
 
 	return 0;
 }

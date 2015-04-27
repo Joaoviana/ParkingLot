@@ -21,12 +21,14 @@ public:
 	void loadParkingLot();
 	void loadCars();
 
-	int getGates() const;
 	int getParkingPlace() const;
 	int getEntrance() const;
 	int getNrOfCars() const;
 	bool checkIfRectangle();
 	bool checkIfEnoughParkingPlaces();
+	const vector<Car>& getCars() const;
+	void setCars(const vector<Car>& cars);
+	int getParkingTime();
 };
 
 #endif /* SRC_PARKINGLOT_H_ */
