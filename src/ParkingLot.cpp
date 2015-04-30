@@ -117,12 +117,11 @@ void ParkingLot::setCars(const vector<Car>& cars) {
 	this->cars = cars;
 }
 
-int ParkingLot::getParkingTime(){
-	int time=0;
-	for(int i=0; i<cars.size(); i++){
+int ParkingLot::getParkingTime() {
+	int time = 0;
+	for (int i = 0; i < cars.size(); i++) {
 		Car c = cars[i];
-		cout << c.getDistanceToEntrance();
-		time+= c.getDistanceToEntrance()/2;
+		time += c.getDistanceToEntrance() / 2;
 	}
 	return time;
 }

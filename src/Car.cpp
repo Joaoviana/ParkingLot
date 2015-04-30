@@ -3,8 +3,6 @@
 #include <iostream>
 #include "Car.h"
 
-
-
 Car::Car() {
 }
 
@@ -13,12 +11,10 @@ Car::Car(string plate, int carWidth, int carHeight, string entrance) {
 	this->carHeight = carHeight;
 	this->carWidth = carWidth;
 	this->entrance = entrance;
-	this->distanceToEntrance=0;
+	this->distanceToEntrance = 0;
 }
 
-
-int Car::getCarWidth()
-{
+int Car::getCarWidth() {
 	return carWidth;
 }
 

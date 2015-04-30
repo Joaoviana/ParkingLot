@@ -1,4 +1,5 @@
 #include "Graph.h"
+
 Vertex::Vertex(vector<Car> cars, string id) {
 	this->cars = cars;
 	this->id = id;
@@ -42,14 +43,15 @@ void Graph::createVertexes(ParkingLot p) {
 	string l = "L";
 	string e = "E";
 	for (int i = 0; i < p.getParkingPlace(); i++) {
-		string finalID = l.append(to_string(i+1));
+		string finalID = l.append(to_string(i + 1));
 		Vertex* v = new Vertex(finalID);
 		vertexSet.push_back(v);
 		l = "L";
 	}
 	for (int j = 0; j < p.getEntrance(); j++) {
-		string finalID = e.append(to_string(j+1));
+		string finalID = e.append(to_string(j + 1));
 		Vertex* v = new Vertex(finalID);
+		v->setEntrance(true);
 		vertexSet.push_back(v);
 		e = "E";
 	}
@@ -72,22 +74,24 @@ void Graph::connectVertexes() {
 		int lots = atoi(nrOfLots.c_str());
 		for (int i = 0; i < lots; i++) {
 			getline(file, line);
-				s = splitString(line, ",");
-				src = s[0];
-				for (int i = 0; i < s.size(); i++) {
-					s1 = splitString(s[i], "-");
-					dest = s1[0];
-					weight = s1[1];
-					int weigthInt = atoi(weight.c_str());
-					Vertex* vertexSrc = findVertex(src);
-					Vertex* vertexDest = findVertex(dest);
-					addEdge(vertexSrc, vertexDest, weigthInt);
+			s = splitString(line, ",");
+			src = s[0];
+			cout << src << "  " << s.size() << endl;
+			for (int i = 1; i < s.size(); i++) {
+				s1 = splitString(s[i], "-");
+				dest = s1[0];
+				weight = s1[1];
+				int weigthInt = atoi(weight.c_str());
+				Vertex* vertexSrc = findVertex(src);
+				Vertex* vertexDest = findVertex(dest);
+				addEdge(vertexSrc, vertexDest, weigthInt);
 
-				}
 			}
+			Vertex* vertexSrc = findVertex(src);
+			cout << src << "  " << vertexSrc->getEdges().size() << endl;
 		}
 	}
-
+}
 
 void Vertex::addEdge(Vertex* dest, int weight) {
 	Edge newEdge(dest, weight);
@@ -207,6 +211,7 @@ bool Graph::addEdge(Vertex* src, Vertex* dest, int w) {
 	if (found != 2)
 		return false;
 	vS->addEdge(vD, w);
+	vD->addEdge(vS,w);
 	return true;
 }
 
@@ -222,50 +227,51 @@ void Graph::carsInPosition(ParkingLot pl, Vertex* entrance, vector<Car> cars) {
 
 	vector<Vertex*> vertices = dijkstra(entrance);
 	int carIndex = 0;
-	cout << cars.size() << endl;
+
+						int distance = 0;
+	cout << "cars number " << cars.size() << endl;
 	while (!cars.empty()) {
-		cout << "cenas2" << endl;
 		int dist = 1000;
 		int lotIndex;
 		for (int i = 0; i < vertices.size(); i++) {
 			if (vertices[i]->getDistanceToSource() < dist
-					&& (!vertices[i]->isFull())) {
+					&& (!vertices[i]->isFull()) && (!vertices[i]->isEntrance())) {
 				dist = vertices[i]->getDistanceToSource();
 				lotIndex = i;
 			}
 		}
 		Vertex* lot = vertices[lotIndex];
 		for (int i = 0; i < vertexSet.size(); i++) {
-			cout << vertexSet[i]->getID();
 			if (vertexSet[i]->getID() == lot->getID()) {
 				Car c = cars[carIndex];
 				vertexSet[i]->addCar(c);
-				cout << c.getPlate();
+				vertexSet[i]->setFull(true);
 				vector<Car> plCars = pl.getCars();
 				for (int i = 0; i < plCars.size(); i++) {
 					Car plCar = plCars[i];
 					if (plCar.getPlate() == c.getPlate()) {
 						plCar.setDistanceToEntrance(dist);
-						cout << "distance to entrance" << dist;
+						distance += plCar.getDistanceToEntrance();
+						cout << "car distance: " << plCar.getDistanceToEntrance() << endl;
 					}
-					plCars[i]=plCar;
+					plCars[i] = plCar;
 					pl.setCars(plCars);
 				}
 
 			}
 		}
 		cars.erase(cars.begin() + carIndex);
-		carIndex++;
-
 	}
+	int time = distance/120;
+	cout << "Parking Time: "<< time << " mins" << endl;
 }
 
 vector<Vertex*> Graph::dijkstra(Vertex* source) {
 	vector<Vertex*> unvisited;
 	vector<int> dist;
-
 	for (int i = 0; i < vertexSet.size(); i++) {
 		if (vertexSet[i]->getID() == source->getID()) {
+			cout << i << endl;
 			vertexSet[i]->setDistanceToSource(0);
 		}
 	}
@@ -276,26 +282,29 @@ vector<Vertex*> Graph::dijkstra(Vertex* source) {
 		unvisited.push_back(vertexSet[i]);
 	}
 
+	cout << unvisited.size() << endl;
 	while (!unvisited.empty()) {
 		int uIndex;
 		uIndex = 0;
-		for (int i = 1; i < unvisited.size(); i++) {
-			if (unvisited[i - 1]->getDistanceToSource() > unvisited[i]->getDistanceToSource()) {
+		for (int i = 0; i < unvisited.size(); i++) {
+			if (unvisited[uIndex]->getDistanceToSource()
+					> unvisited[i]->getDistanceToSource()) {
 				uIndex = i;
 			}
 		}
-		Vertex u = (*vertexSet[uIndex]);
-
+		Vertex u = (*unvisited[uIndex]);
 		for (int i = 0; i < unvisited.size(); i++) {
+				cout <<unvisited[i]->getID() << endl;
 			if (unvisited[i]->getID() == u.getID()) {
+				cout << "11" << endl;
+		cout << u.getEdges().size() << endl;
 				unvisited.erase(unvisited.begin() + i);
+				cout << unvisited.size() << endl;
 				break;
 			}
 		}
 
-		cout << u.getID() << endl;
 		vector<Edge> edges = u.getEdges();
-		cout << edges.size() << endl;
 		for (int i = 0; i < edges.size(); i++) {
 			if (!edges[i].getDest()->isEntrance()) {
 				Vertex* v = edges[i].getDest();
@@ -308,48 +317,37 @@ vector<Vertex*> Graph::dijkstra(Vertex* source) {
 				int weight = edges[i].getWeight();
 				int alt = vertexSet[uIndex]->getDistanceToSource() + weight;
 				if (alt < vertexSet[vIndex]->getDistanceToSource()) {
-					cout << "di12" << endl;
 					vertexSet[vIndex]->setDistanceToSource(alt);
 				}
 			}
 		}
-
-	}
-
-	for (int i = 0; i < vertexSet.size(); i++) {
-		cout << "di13" << endl;
-		vertexSet[i]->setDistanceToSource(dist[i]);
 	}
 
 	return vertexSet;
 
 }
 
-void Graph::parkCars(ParkingLot pl){
+void Graph::parkCars(ParkingLot pl) {
 	int ents = pl.getEntrance();
-	cout << "cenas1" << endl;
-	for(int i=0;i<ents;i++){
+	for (int i = 0; i < ents; i++) {
 		string ent = "E";
-		int intnum = i+1;
+		int intnum = i + 1;
 		string num = to_string(intnum);
 		ent.append(num);
 		vector<Car> cars = pl.getCars();
 		vector<Car> entCars;
-		cout << cars.size() << endl;
-		for(int j=0; j<cars.size();j++){
-			Car car  = cars[j];
+		for (int j = 0; j < cars.size(); j++) {
+			Car car = cars[j];
 
-			if (car.getEntrance() == ent) entCars.push_back(car);
+			if (car.getEntrance() == ent)
+				entCars.push_back(car);
 		}
-		for(int j=0; j<vertexSet.size();j++){
-			cout << vertexSet.size() << endl;
-			if(vertexSet[j]->getID()==ent)
-			{
+		for (int j = 0; j < vertexSet.size(); j++) {
+			if (vertexSet[j]->getID() == ent) {
 				carsInPosition(pl, vertexSet[j], entCars);
 				break;
 			}
 		}
-		ent="E";
+		ent = "E";
 	}
 }
-

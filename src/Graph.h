@@ -63,6 +63,7 @@ public:
 class Graph {
 	vector<Vertex*> vertexSet;
 	int totalweight;
+	int totalDistance = 0;
 
 public:
 	Graph();
@@ -76,10 +77,12 @@ public:
 	void createVertexes(ParkingLot p);
 	void connectVertexes();
 	Vertex* findVertex(string id);
-	void carsInPosition(ParkingLot pl,Vertex* entrance, vector<Car> cars);
+	void carsInPosition(ParkingLot pl, Vertex* entrance, vector<Car> cars);
 	vector<Vertex*> dijkstra(Vertex* source);
 	void parkCars(ParkingLot pl);
 
-	//void dijkstraShortestPath(Gate &g, const T &lot)
+	int getTotalDistance() const {
+		return totalDistance;
+	}
 };
 
